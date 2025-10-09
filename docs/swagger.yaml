@@ -1,0 +1,136 @@
+basePath: /
+definitions:
+  models.BasicResponse:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  models.Customer:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      phone:
+        type: string
+    type: object
+  models.CustomerCreate:
+    properties:
+      email:
+        type: string
+      first_name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      last_name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      phone:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - phone
+    type: object
+  models.CustomerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.Customer'
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  models.ListCustomerResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Customer'
+        type: array
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: API Rest con Go y Swagger usando Fiber framework y Swaggo.
+  title: Go Swagger API
+  version: "1.0"
+paths:
+  /customers:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListCustomerResponse'
+      summary: Listar clientes
+      tags:
+      - Clientes
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Cliente a crear
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/models.CustomerCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Crear cliente
+      tags:
+      - Clientes
+  /customers/{id}:
+    delete:
+      parameters:
+      - description: ID del cliente
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Eliminar cliente
+      tags:
+      - Clientes
+    get:
+      parameters:
+      - description: ID del cliente
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CustomerResponse'
+      summary: Obtener cliente por ID
+      tags:
+      - Clientes
+swagger: "2.0"
