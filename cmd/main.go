@@ -28,6 +28,21 @@ func main() {
 	customerService := services.NewCustomerService(customerRepo)
 	handlers.RegisterCustomerRoutes(app, customerService)
 
+	// Registrar recursos de vehículos
+	vehicleRepo := repositories.NewVehicleRepository(config.DB)
+	vehicleService := services.NewVehicleService(vehicleRepo)
+	handlers.RegisterVehicleRoutes(app, vehicleService)
+
+	// Registrar recursos de transacciones
+	transactionRepo := repositories.NewTransactionsRepository(config.DB)
+	transactionService := services.NewTransactionsService(transactionRepo)
+	handlers.RegisterTransactionsRoutes(app, transactionService)
+
+	// Registrar recursos de login
+	loginRepo := repositories.NewLoginRepository(config.DB)
+	loginService := services.NewLoginService(loginRepo)
+	handlers.RegisterLoginRoutes(app, loginService)
+
 	// Ruta de prueba
 	app.Get("/ping", func(c *fiber.Ctx) error {
 		return c.SendString("pong")

@@ -60,6 +60,112 @@ definitions:
       status_code:
         type: integer
     type: object
+  models.ListVehicleResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Vehicle'
+        type: array
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  models.LoginRequest:
+    properties:
+      password:
+        maxLength: 14
+        minLength: 10
+        type: string
+      username:
+        maxLength: 20
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  models.LoginSuccessResponse:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+      token:
+        type: string
+    type: object
+  models.PaymentInfo:
+    properties:
+      customer_dni:
+        type: string
+      email:
+        type: string
+      ends_at:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      minute_fee:
+        type: number
+      minutes:
+        type: number
+      phone:
+        type: string
+      placa:
+        type: string
+      starts_at:
+        type: string
+      total_due:
+        type: number
+    type: object
+  models.StartTiming:
+    properties:
+      customer_dni:
+        type: string
+      placa:
+        type: string
+    required:
+    - customer_dni
+    - placa
+    type: object
+  models.Vehicle:
+    properties:
+      created_at:
+        type: string
+      marca:
+        type: string
+      modelo:
+        type: string
+      placa:
+        type: string
+      status:
+        type: boolean
+      tipo:
+        type: string
+    type: object
+  models.VehicleCreate:
+    properties:
+      marca:
+        type: string
+      modelo:
+        type: string
+      placa:
+        type: string
+      tipo:
+        type: string
+    type: object
+  models.VehicleResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.Vehicle'
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
 info:
   contact: {}
   description: API Rest con Go y Swagger usando Fiber framework y Swaggo.
@@ -133,4 +239,140 @@ paths:
       summary: Obtener cliente por ID
       tags:
       - Clientes
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Permite a un usuario iniciar sesión y obtener un token JWT.
+      parameters:
+      - description: Datos de login
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Realizar login
+      tags:
+      - Login
+  /transactions:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Transacción a crear
+        in: body
+        name: StartTiming
+        required: true
+        schema:
+          $ref: '#/definitions/models.StartTiming'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Crear una nueva transacción
+      tags:
+      - Transacciones
+  /transactions/getInfo/{id}:
+    get:
+      parameters:
+      - description: ID de la transacción
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaymentInfo'
+      summary: Obtener información de una transacción por ID
+      tags:
+      - Transacciones
+  /vehicles:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListVehicleResponse'
+      summary: Listar vehículos
+      tags:
+      - Vehículos
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Vehículo a crear
+        in: body
+        name: vehicle
+        required: true
+        schema:
+          $ref: '#/definitions/models.VehicleCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Crear vehículo
+      tags:
+      - Vehículos
+  /vehicles/placa/{placa}:
+    delete:
+      parameters:
+      - description: Placa del vehículo
+        in: path
+        name: placa
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BasicResponse'
+      summary: Eliminar vehículo
+      tags:
+      - Vehículos
+    get:
+      parameters:
+      - description: Placa del vehículo
+        in: path
+        name: placa
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.VehicleResponse'
+      summary: Obtener vehículo por Placa
+      tags:
+      - Vehículos
 swagger: "2.0"

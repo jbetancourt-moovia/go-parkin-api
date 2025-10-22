@@ -118,6 +118,217 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/login": {
+            "post": {
+                "description": "Permite a un usuario iniciar sesión y obtener un token JWT.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Realizar login",
+                "parameters": [
+                    {
+                        "description": "Datos de login",
+                        "name": "loginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transacciones"
+                ],
+                "summary": "Crear una nueva transacción",
+                "parameters": [
+                    {
+                        "description": "Transacción a crear",
+                        "name": "StartTiming",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StartTiming"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/getInfo/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transacciones"
+                ],
+                "summary": "Obtener información de una transacción por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la transacción",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vehículos"
+                ],
+                "summary": "Listar vehículos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ListVehicleResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vehículos"
+                ],
+                "summary": "Crear vehículo",
+                "parameters": [
+                    {
+                        "description": "Vehículo a crear",
+                        "name": "vehicle",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VehicleCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/vehicles/placa/{placa}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vehículos"
+                ],
+                "summary": "Obtener vehículo por Placa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Placa del vehículo",
+                        "name": "placa",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.VehicleResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vehículos"
+                ],
+                "summary": "Eliminar vehículo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Placa del vehículo",
+                        "name": "placa",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.BasicResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -201,6 +412,166 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Customer"
                     }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ListVehicleResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Vehicle"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 14,
+                    "minLength": 10
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
+                }
+            }
+        },
+        "models.LoginSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PaymentInfo": {
+            "type": "object",
+            "properties": {
+                "customer_dni": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "ends_at": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "minute_fee": {
+                    "type": "number"
+                },
+                "minutes": {
+                    "type": "number"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                },
+                "starts_at": {
+                    "type": "string"
+                },
+                "total_due": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.StartTiming": {
+            "type": "object",
+            "required": [
+                "customer_dni",
+                "placa"
+            ],
+            "properties": {
+                "customer_dni": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Vehicle": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "marca": {
+                    "type": "string"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "boolean"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.VehicleCreate": {
+            "type": "object",
+            "properties": {
+                "marca": {
+                    "type": "string"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.VehicleResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.Vehicle"
                 },
                 "message": {
                     "type": "string"
