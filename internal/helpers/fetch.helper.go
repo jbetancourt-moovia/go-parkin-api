@@ -30,7 +30,7 @@ func FetchExternalData[T any](method string, url string, payload any) (*T, error
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("error al autenticar usuario")
+		return nil, errors.New("error al comunicar con el servicio externo")
 	}
 
 	// Decodificar la respuesta en el tipo genérico

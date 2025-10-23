@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"errors"
@@ -37,12 +38,16 @@ func (s *LoginService) DoLogin(ctx context.Context, loginRequest models.LoginReq
 	payload := models.LoginAPIRequest{
 		Username: loginRequest.Username,
 		Password: loginRequest.Password,
-		Group:    "devrb",
+		Group:    os.Getenv("AD_GROUP"),
 	}
 
+	// Genéricos --> T
 	data, err := helpers.FetchExternalData[models.LoginAPIResponse]("POST", os.Getenv("AD_BASE_URL"), payload)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "externo") {
+			return "", errors.New("usuario o contraseña incorrectos")
+		}
 		return "", err
 	}
 
