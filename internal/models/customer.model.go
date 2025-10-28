@@ -1,11 +1,12 @@
 package models
 
 type Customer struct {
-	ID        int64  `json:"id" db:"id"`
-	FirstName string `json:"first_name" db:"first_name"`
-	LastName  string `json:"last_name" db:"last_name"`
-	Phone     string `json:"phone" db:"phone"`
-	Email     string `json:"email" db:"email"`
+	ID        int64   `json:"id" db:"id"`
+	FirstName string  `json:"first_name" db:"first_name"`
+	LastName  string  `json:"last_name" db:"last_name"`
+	Phone     string  `json:"phone" db:"phone"`
+	Email     string  `json:"email" db:"email"`
+	Username  *string `json:"username" db:"username"`
 }
 
 type CustomerCreate struct {
@@ -13,6 +14,7 @@ type CustomerCreate struct {
 	LastName  string `json:"last_name" db:"last_name" validate:"required,min=3,max=100"`
 	Phone     string `json:"phone" db:"phone" validate:"required,len=10,numeric"`
 	Email     string `json:"email" db:"email" validate:"required,email"`
+	DNI       string `json:"dni" db:"dni" validate:"required,numeric"`
 }
 
 type ListCustomerResponse struct {

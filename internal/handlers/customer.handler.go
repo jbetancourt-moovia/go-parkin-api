@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"go-api-swagger/internal/helpers"
+	"go-api-swagger/internal/middlewares"
 	"go-api-swagger/internal/models"
 	"go-api-swagger/internal/services"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var validate = validator.New()
@@ -14,16 +17,22 @@ var validate = validator.New()
 // Constructor central
 func RegisterCustomerRoutes(app *fiber.App, service *services.CustomerService) {
 
+	// Permiso verificado por helper dentro del handler
 	app.Get("/customers", func(c *fiber.Ctx) error {
 		return GetAllCustomers(c, service)
 	})
-	app.Post("/customers", func(c *fiber.Ctx) error {
+
+	// Permiso verificado por middleware
+	app.Post("/customers", middlewares.RequirePermission(1), func(c *fiber.Ctx) error {
 		return CreateCustomer(c, service)
 	})
-	app.Get("/customers/:id", func(c *fiber.Ctx) error {
+
+	// Permiso verificado por middleware y helper (mixto)
+	app.Get("/customers/:id", middlewares.RequirePermission(3), func(c *fiber.Ctx) error {
 		return GetCustomerByID(c, service)
 	})
-	app.Delete("/customers/:id", func(c *fiber.Ctx) error {
+
+	app.Delete("/customers/:id", middlewares.RequirePermission(4), func(c *fiber.Ctx) error {
 		return DeleteCustomer(c, service)
 	})
 }
@@ -33,7 +42,18 @@ func RegisterCustomerRoutes(app *fiber.App, service *services.CustomerService) {
 // @Produce json
 // @Success 200 {object} models.ListCustomerResponse
 // @Router /customers [get]
+// @Security BearerAuth
 func GetAllCustomers(c *fiber.Ctx, service *services.CustomerService) error {
+
+	// Verificar si tiene el permiso de listar todos los usuarios
+	// No se usa middleware para demostrar el uso del helper directamente
+	claims := c.Locals("claims").(jwt.MapClaims)
+	if !helpers.HasPermission(claims, 3) {
+		return c.Status(403).JSON(models.BasicResponse{
+			Message:    "Tus permisos son insuficientes para ejecutar esta acción",
+			StatusCode: 403,
+		})
+	}
 
 	list, err := service.GetAll(c.Context())
 	if err != nil {
@@ -59,6 +79,7 @@ func GetAllCustomers(c *fiber.Ctx, service *services.CustomerService) error {
 // @Param customer body models.CustomerCreate true "Cliente a crear"
 // @Success 201 {object} models.BasicResponse
 // @Router /customers [post]
+// @Security BearerAuth
 func CreateCustomer(c *fiber.Ctx, service *services.CustomerService) error {
 
 	var customer models.CustomerCreate
@@ -101,6 +122,7 @@ func CreateCustomer(c *fiber.Ctx, service *services.CustomerService) error {
 // @Param id path int true "ID del cliente"
 // @Success 200 {object} models.CustomerResponse
 // @Router /customers/{id} [get]
+// @Security BearerAuth
 func GetCustomerByID(c *fiber.Ctx, service *services.CustomerService) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
@@ -119,6 +141,19 @@ func GetCustomerByID(c *fiber.Ctx, service *services.CustomerService) error {
 		})
 	}
 
+	claims, _ := c.Locals("claims").(jwt.MapClaims)
+	username := claims["username"].(string)
+
+	if *customer.Username == username {
+		// Revisar si tiene el permiso 2 (por ejemplo: "ver otros usuarios")
+		if !helpers.HasPermission(claims, 2) {
+			return c.Status(403).JSON(models.BasicResponse{
+				StatusCode: 403,
+				Message:    "No tienes permiso para ver este registro",
+			})
+		}
+	}
+
 	return c.Status(200).JSON(models.CustomerResponse{
 		StatusCode: 200,
 		Data:       customer,
@@ -132,6 +167,7 @@ func GetCustomerByID(c *fiber.Ctx, service *services.CustomerService) error {
 // @Param id path int true "ID del cliente"
 // @Success 200 {object} models.BasicResponse
 // @Router /customers/{id} [delete]
+// @Security BearerAuth
 func DeleteCustomer(c *fiber.Ctx, service *services.CustomerService) error {
 
 	id, err := c.ParamsInt("id")

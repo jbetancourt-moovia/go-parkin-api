@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/customers": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -34,6 +39,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -67,6 +77,11 @@ const docTemplate = `{
         },
         "/customers/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -93,6 +108,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -360,18 +380,25 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "models.CustomerCreate": {
             "type": "object",
             "required": [
+                "dni",
                 "email",
                 "first_name",
                 "last_name",
                 "phone"
             ],
             "properties": {
+                "dni": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -580,6 +607,13 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

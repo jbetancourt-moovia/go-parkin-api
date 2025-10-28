@@ -19,9 +19,13 @@ definitions:
         type: string
       phone:
         type: string
+      username:
+        type: string
     type: object
   models.CustomerCreate:
     properties:
+      dni:
+        type: string
       email:
         type: string
       first_name:
@@ -35,6 +39,7 @@ definitions:
       phone:
         type: string
     required:
+    - dni
     - email
     - first_name
     - last_name
@@ -181,6 +186,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ListCustomerResponse'
+      security:
+      - BearerAuth: []
       summary: Listar clientes
       tags:
       - Clientes
@@ -201,6 +208,8 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BasicResponse'
+      security:
+      - BearerAuth: []
       summary: Crear cliente
       tags:
       - Clientes
@@ -219,6 +228,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.BasicResponse'
+      security:
+      - BearerAuth: []
       summary: Eliminar cliente
       tags:
       - Clientes
@@ -236,6 +247,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.CustomerResponse'
+      security:
+      - BearerAuth: []
       summary: Obtener cliente por ID
       tags:
       - Clientes
@@ -375,4 +388,9 @@ paths:
       summary: Obtener vehículo por Placa
       tags:
       - Vehículos
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

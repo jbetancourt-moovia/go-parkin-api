@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package customer;
+option go_package = "internal/grpc;grpcpb";
+
+service CustomerService {
+  rpc GetCustomerByID (GetCustomerRequest) returns (GetCustomerResponse);
+  rpc StreamAllCustomers (google.protobuf.Empty) returns (stream GetCustomerResponse);
+}
+
+message GetCustomerRequest {
+  int64 id = 1;
+}
+
+message GetCustomerResponse {
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string phone = 4;
+  string email = 5;
+  string username = 6;
+}

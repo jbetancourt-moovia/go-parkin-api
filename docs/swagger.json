@@ -10,6 +10,11 @@
     "paths": {
         "/customers": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -27,6 +32,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -60,6 +70,11 @@
         },
         "/customers/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -86,6 +101,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -353,18 +373,25 @@
                 },
                 "phone": {
                     "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "models.CustomerCreate": {
             "type": "object",
             "required": [
+                "dni",
                 "email",
                 "first_name",
                 "last_name",
                 "phone"
             ],
             "properties": {
+                "dni": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -573,6 +600,13 @@
                     "type": "integer"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }
