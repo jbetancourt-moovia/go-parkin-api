@@ -25,7 +25,7 @@ func main() {
 	customerService := services.NewCustomerService(customerRepo)
 
 	go servers.StartRestAPIServer(customerService)
-	servers.StartGrpcServer(customerService)
+	go servers.StartGrpcServer(customerService)
 
 	select {} // mantiene el main vivo
 }
