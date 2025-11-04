@@ -8,12 +8,41 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type ICustomerRepository interface {
+	GetAll(ctx context.Context) (*[]models.Customer, error)
+	Create(ctx context.Context, c *models.CustomerCreate) error
+	GetByID(ctx context.Context, id int) (*models.Customer, error)
+	Delete(ctx context.Context, id int) error
+	GetByEmail(ctx context.Context, email string) (*models.Customer, error)
+	GetByUsername(ctx context.Context, username string) (*models.Customer, error)
+}
+
 type CustomerRepository struct {
 	db *pgxpool.Pool
 }
 
 func NewCustomerRepository(db *pgxpool.Pool) *CustomerRepository {
 	return &CustomerRepository{db: db}
+}
+
+func (r *CustomerRepository) GetByUsername(ctx context.Context, username string) (*models.Customer, error) {
+	var c models.Customer
+	err := r.db.QueryRow(ctx, `SELECT id, first_name, last_name, phone, email, username FROM customers WHERE username = $1`, username).
+		Scan(&c.ID, &c.FirstName, &c.LastName, &c.Phone, &c.Email, &c.Username)
+	if err != nil {
+		return nil, err
+	}
+	return &c, nil
+}
+
+func (r *CustomerRepository) GetByEmail(ctx context.Context, email string) (*models.Customer, error) {
+	var c models.Customer
+	err := r.db.QueryRow(ctx, `SELECT id, first_name, last_name, phone, email, username FROM customers WHERE email = $1`, email).
+		Scan(&c.ID, &c.FirstName, &c.LastName, &c.Phone, &c.Email, &c.Username)
+	if err != nil {
+		return nil, err
+	}
+	return &c, nil
 }
 
 func (r *CustomerRepository) GetAll(ctx context.Context) (*[]models.Customer, error) {

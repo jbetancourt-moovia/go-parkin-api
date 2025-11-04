@@ -10,11 +10,12 @@ type Customer struct {
 }
 
 type CustomerCreate struct {
-	FirstName string `json:"first_name" db:"first_name" validate:"required,min=3,max=100"`
-	LastName  string `json:"last_name" db:"last_name" validate:"required,min=3,max=100"`
-	Phone     string `json:"phone" db:"phone" validate:"required,len=10,numeric"`
-	Email     string `json:"email" db:"email" validate:"required,email"`
-	DNI       string `json:"dni" db:"dni" validate:"required,numeric"`
+	FirstName string  `json:"first_name" db:"first_name" validate:"required,min=3,max=100"`
+	LastName  string  `json:"last_name" db:"last_name" validate:"required,min=3,max=100"`
+	Phone     string  `json:"phone" db:"phone" validate:"required,len=10,numeric"`
+	Email     string  `json:"email" db:"email" validate:"required,email"`
+	Username  *string `json:"username" db:"username"`
+	DNI       string  `json:"dni" db:"dni" validate:"required,numeric"`
 }
 
 type ListCustomerResponse struct {

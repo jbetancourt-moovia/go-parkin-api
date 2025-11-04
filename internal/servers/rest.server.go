@@ -14,7 +14,7 @@ import (
 
 func StartRestAPIServer(customerService *services.CustomerService) {
 	app := fiber.New()
-	app.Use(middlewares.ProtectedRoutes())
+	app.Use(middlewares.JWTProtectedRoutesMiddleware())
 
 	handlers.RegisterCustomerRoutes(app, customerService)
 

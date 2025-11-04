@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func ProtectedRoutes() fiber.Handler {
+func JWTProtectedRoutesMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		protected := []string{
 			"/customers",
