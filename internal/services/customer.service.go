@@ -40,7 +40,7 @@ func (s *CustomerService) Create(ctx context.Context, c *models.CustomerCreate) 
 
 	if c.Username != nil {
 		username := strings.TrimSpace(*c.Username)
-		if username != "" {
+		if *c.Username != "" {
 			existingByUsername, _ := s.repo.GetByUsername(ctx, username)
 			if existingByUsername != nil {
 				return errors.New("ya existe un cliente con ese nombre de usuario")

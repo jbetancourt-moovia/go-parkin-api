@@ -24,6 +24,7 @@ func TestCustomerGetAllService(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, &customers, result)
 	mockRepo.AssertExpectations(t)
+
 }
 
 func TestCustomerCreateService(t *testing.T) {
@@ -88,6 +89,7 @@ func TestCustomerCreateService(t *testing.T) {
 		mockRepo.On("Create", ctx, input).Return(errors.New("DB error"))
 
 		err := service.Create(ctx, input)
+		mockRepo.AssertCalled(t, "Create", ctx, input)
 		assert.EqualError(t, err, "DB error")
 	})
 
